@@ -1,8 +1,11 @@
 {
   "dependencies": {
+    "bcrypt": "^6.0.0",
     "express": "^5.2.1",
     "express-handlebars": "^9.0.1",
-    "handlebars": "^4.7.9"
+    "express-session": "^1.19.0",
+    "handlebars": "^4.7.9",
+    "mysql2": "^3.22.0"
   },
   "name": "webproyecto",
   "version": "1.0.0",

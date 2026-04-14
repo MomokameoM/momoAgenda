@@ -1,39 +1,21 @@
 <div class="container text-center">
-    <h1 id="titulo"><b>Horario</b></h1>
+    <h1 id="titulo"><b>Horario de {{username}}</b></h1>
     <table class="table table-light table-hover table-bordered" id="tabla">
     <thead class="table-dark">
         <tr>
+            <th scope="col">Materia</th>
+            <th scope="col">Dia</th>
             <th scope="col">Hora</th>
-            <th scope="col">Lunes</th>
-            <th scope="col">Martes</th>
-            <th scope="col">Miércoles</th>
-            <th scope="col">Jueves</th>
-            <th scope="col">Viernes</th>
-            <th scope="col">Sábado</th>
-            <th scope="col">Domingo</th>
         </tr>
     </thead>
     <tbody>
+        {{#each horarios}}
         <tr>
-            <th>08:00 - 09:00</th>
-            <td>Matemáticas</td>
-            <td>Física</td>
-            <td>Química</td>
-            <td>Biología</td>
-            <td>Historia</td>
-            <td>-</td>
-            <td>-</td>
+            <td>{{this.nombre}}</td>
+            <td>{{this.dia}}</td>
+            <td>{{this.hora_inicio}} - {{this.hora_fin}}</td>
         </tr>
-        <tr>
-            <th>09:00 - 10:00</th>
-            <td>Castellano</td>
-            <td>Inglés</td>
-            <td>Música</td>
-            <td>Arte</td>
-            <td>Educación Física</td>
-            <td>-</td>
-            <td>-</td>
-        </tr>
+        {{/each}}
     </tbody>
 </table>
 <button type="button" class="btn btn-warning" id="boton_personal">Editar</button>

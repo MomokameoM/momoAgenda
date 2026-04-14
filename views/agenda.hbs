@@ -1,14 +1,27 @@
 <div class="container text-center">
   <div class="row align-items-center">
-    <h1 id="titulo" class="pb-2"><b>Agenda</b></h1>
+    <h1 id="titulo" class="pb-2"><b>Agenda de {{username}}</b></h1>
     <div class="col">
         <table class="table table-light table-hover table-bordered" id="tabla">
         <thead class="table-dark">
             <tr>
                 <th scope="col">Fecha</th>
+                <th scope="col">Materia</th>
                 <th scope="col">Tarea</th>
                 <th scope="col">Estado</th>
             </tr>
+        </thead>
+        <tbody>
+            {{#each agenda}}
+            <tr>
+                <td>{{this.fecha_entrega}}</td>
+                <td>{{this.materia}}</td>
+                <td>{{this.titulo}}</td>
+                <td>{{this.estado}}</td>
+            </tr>
+            {{/each}}
+        </tbody>
+
         </table>
     </div>
     <div style="background-color: red;" class="col">
