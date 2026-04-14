@@ -68,10 +68,10 @@ app.get('/', guest,(req, res) => {
 //---------------- VISTA PARA TABLA HORARIO-----------------
 
 app.get('/horario', auth, (req, res) => {
-  const usuario_id = req.session.userId; // Obtener el ID del usuario desde la sesión
+  const usuario_id = req.session.userId;
 
   const query = `
-    SELECT m.nombre, h.dia, h.hora_inicio, h.hora_fin
+    SELECT m.nombre, m.color, m.profesor, h.dia, h.hora_inicio, h.hora_fin
     FROM horarios h
     JOIN materias m ON h.materia_id = m.id
     WHERE m.usuario_id = ?
@@ -79,10 +79,83 @@ app.get('/horario', auth, (req, res) => {
   `;
 
   db.query(query, [usuario_id], (err, results) => {
-    if (err) throw err;
-    res.render('horario', { titulo: 'Horario', horarios: results });
+    if (err) throw err;console.log(results);
+
+    const dias = ['Lunes','Martes','Miercoles','Jueves','Viernes'];
+
+    let horas = [];
+    for (let i = 7; i <= 14; i++) {
+      horas.push(`${i.toString().padStart(2,'0')}:00:00`);
+    }
+
+    let tabla = {};
+
+    // inicializar
+    horas.forEach(hora => {
+      tabla[hora] = {};
+      dias.forEach(dia => {
+        tabla[hora][dia] = { materia: null, rowspan: 1, mostrar: true };
+      });
+    });
+
+    // llenar datos
+    results.forEach(item => {
+      const dia = item.dia;
+
+      let inicio = parseInt(item.hora_inicio.split(':')[0]);
+      let fin = parseInt(item.hora_fin.split(':')[0]);
+
+      let duracion = fin - inicio;
+
+      let horaInicioKey = `${inicio.toString().padStart(2,'0')}:00:00`;
+
+      // seguridad (evita errores si algo no coincide)
+      if (!tabla[horaInicioKey] || !tabla[horaInicioKey][dia]) return;
+
+      tabla[horaInicioKey][dia] = {
+        materia: item.nombre,
+        color: item.color,
+        profesor: item.profesor,
+        rowspan: duracion,
+        mostrar: true
+      };
+
+      for (let i = inicio + 1; i < fin; i++) {
+        let horaKey = `${i.toString().padStart(2,'0')}:00:00`;
+
+        if (tabla[horaKey] && tabla[horaKey][dia]) {
+          tabla[horaKey][dia] = {
+            materia: null,
+            rowspan: 0,
+            mostrar: false
+          };
+        }
+      }console.log(item.dia);
+    });
+
+    let filas = [];
+
+      horas.forEach(hora => {
+        let fila = {
+          hora,
+          dias: []
+        };
+
+        dias.forEach(dia => {
+          fila.dias.push(tabla[hora][dia]);
+        });
+
+        filas.push(fila);
+      });
+      
+      res.render('horario', {
+        dias,
+        filas
+      });
   });
 });
+
+
 //---------------- VISTA PARA TABLA AGENDA-----------------
 app.get('/agenda', auth, (req, res) => {
     const usuario_id = req.session.userId;

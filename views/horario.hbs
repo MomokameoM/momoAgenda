@@ -1,22 +1,26 @@
-<div class="container text-center">
-    <h1 id="titulo"><b>Horario de {{username}}</b></h1>
-    <table class="table table-light table-hover table-bordered" id="tabla">
-    <thead class="table-dark">
-        <tr>
-            <th scope="col">Materia</th>
-            <th scope="col">Dia</th>
-            <th scope="col">Hora</th>
-        </tr>
-    </thead>
-    <tbody>
-        {{#each horarios}}
-        <tr>
-            <td>{{this.nombre}}</td>
-            <td>{{this.dia}}</td>
-            <td>{{this.hora_inicio}} - {{this.hora_fin}}</td>
-        </tr>
-        {{/each}}
-    </tbody>
+<h1>Horario</h1>
+
+<table border="1">
+  <tr>
+    <th>Hora</th>
+    {{#each dias}}
+      <th>{{this}}</th>
+    {{/each}}
+  </tr>
+
+  {{#each filas}}
+  <tr>
+    <td>{{hora}}</td>
+
+    {{#each dias}}
+      {{#if mostrar}}
+        <td rowspan="{{rowspan}}" style="background-color: {{color}};" >
+            <strong>{{materia}}</strong><br>
+            <small>{{profesor}}</small>
+        </td>
+      {{/if}}
+    {{/each}}
+
+  </tr>
+  {{/each}}
 </table>
-<button type="button" class="btn btn-warning" id="boton_personal">Editar</button>
-</div>
