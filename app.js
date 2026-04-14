@@ -1,6 +1,6 @@
 const express = require('express');
 const { engine } = require('express-handlebars');
-const db = require('./db');//db.js
+const db = require('./db/db');//db.js
 /*-----------HASHEO----------- */
 const bcrypt = require('bcrypt');
 
