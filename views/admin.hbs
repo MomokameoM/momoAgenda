@@ -1,0 +1,9 @@
+<h1>ADMINISTRADOR</h1>
+{{#if isAdmin}}
+    <p>Bienvenido, {{username}}. Eres un administrador.</p>
+    <a href="/admin/usuarios">Gestionar Usuarios</a><br>
+    <a href="/admin/materias">Gestionar Materias</a><br>
+    <a href="/admin/profesores">Gestionar Profesores</a><br>
+{{else}}
+    <p>Acceso denegado. No eres un administrador.</p>
+{{/if}}
