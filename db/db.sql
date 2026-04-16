@@ -1,14 +1,16 @@
 /*---------CREAR BASE----------*/ 
 create database if not exists momoAgenda;
 use momoAgenda;
+-- drop database momoAgenda;
 /*--------------TABLAS-------------*/
 CREATE TABLE usuarios (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(100),
     email VARCHAR(100) UNIQUE,
-    password VARCHAR(255)
+    password VARCHAR(255),
+    rol ENUM('user', 'admin') DEFAULT 'user'    
 );
-ALTER TABLE usuarios ADD rol ENUM('user', 'admin') DEFAULT 'user';
+-- ALTER TABLE usuarios ADD rol ENUM('user', 'admin') DEFAULT 'user';
 -- SELECT * FROM usuarios;
 
 CREATE TABLE materias (
@@ -16,10 +18,9 @@ CREATE TABLE materias (
     usuario_id INT,
     nombre VARCHAR(100),
     profesor VARCHAR(100),
-    FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
+    FOREIGN KEY (usuario_id) REFERENCES usuarios(id),
+    color VARCHAR(7) DEFAULT '#FF5733'
 );
-ALTER TABLE materias ADD color VARCHAR(7);
-ALTER TABLE materias ALTER COLUMN color SET DEFAULT '#FF5733';
 ALTER TABLE materias ADD UNIQUE (usuario_id, nombre);
 -- SELECT * FROM materias;
 
