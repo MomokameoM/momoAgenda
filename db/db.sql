@@ -8,6 +8,7 @@ CREATE TABLE usuarios (
     email VARCHAR(100) UNIQUE,
     password VARCHAR(255)
 );
+ALTER TABLE usuarios ADD rol ENUM('user', 'admin') DEFAULT 'user';
 -- SELECT * FROM usuarios;
 
 CREATE TABLE materias (
@@ -17,7 +18,9 @@ CREATE TABLE materias (
     profesor VARCHAR(100),
     FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
 );
--- ALTER TABLE materias ADD color VARCHAR(7);
+ALTER TABLE materias ADD color VARCHAR(7);
+ALTER TABLE materias ALTER COLUMN color SET DEFAULT '#FF5733';
+ALTER TABLE materias ADD UNIQUE (usuario_id, nombre);
 -- SELECT * FROM materias;
 
 CREATE TABLE horarios (
