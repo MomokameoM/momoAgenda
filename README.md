@@ -42,7 +42,7 @@ La aplicación está orientada a estudiantes y docentes que necesiten una plataf
 ## 1️⃣ Clonar el repositorio
 
 ```bash
-git clone https://github.com/usuario/agenda-escolar.git](https://github.com/MomokameoM/momoAgenda)
+git clone https://github.com/MomokameoM/momoAgenda
 ```
 
 ---
