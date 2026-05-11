@@ -62,22 +62,6 @@ npm install
 ```
 
 ---
-
-## 4️⃣ Configurar variables de entorno
-
-Editar archivo `db.js` por los datos de su instalacion de mySQL
-
-```db
-const connection = mysql.createConnection({
-  host: 'localhost',
-  user: 'root',
-  password: 'momo',
-  database: 'momoAgenda'
-});
-```
-
----
-
 ## 5️⃣ Importar la base de datos
 
 Ejecutar el archivo:
@@ -87,6 +71,22 @@ database/db.sql
 ```
 
 en MySQL.
+
+---
+
+
+## 4️⃣ Configurar variables de entorno
+
+Editar archivo `db.js` por los datos de su instalacion de mySQL
+
+```db ejemplo
+const connection = mysql.createConnection({
+  host: 'localhost',
+  user: 'root',
+  password: 'momo',
+  database: 'momoAgenda'
+});
+```
 
 ---
 
