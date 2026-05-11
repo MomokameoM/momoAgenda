@@ -62,7 +62,7 @@ npm install
 ```
 
 ---
-## 5️⃣ Importar la base de datos
+## 4️⃣ Importar la base de datos
 
 Ejecutar el archivo:
 
@@ -75,7 +75,7 @@ en MySQL.
 ---
 
 
-## 4️⃣ Configurar variables de entorno
+## 5️⃣ Configurar variables de entorno
 
 Editar archivo `db.js` por los datos de su instalacion de mySQL
 
