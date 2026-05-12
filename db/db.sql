@@ -1,8 +1,10 @@
 /*---------CREAR BASE----------*/ 
+
+drop database if exists momoAgenda;
 create database if not exists momoAgenda;
 use momoAgenda;
--- drop database momoAgenda;
-/*--------------TABLAS-------------*/
+
+/*-----------------------------TABLAS-----------------------*/
 CREATE TABLE usuarios (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(100),
@@ -10,7 +12,6 @@ CREATE TABLE usuarios (
     password VARCHAR(255),
     rol ENUM('user', 'admin') DEFAULT 'user'    
 );
--- ALTER TABLE usuarios ADD rol ENUM('user', 'admin') DEFAULT 'user';
 -- SELECT * FROM usuarios;
 
 CREATE TABLE materias (
@@ -18,10 +19,10 @@ CREATE TABLE materias (
     usuario_id INT,
     nombre VARCHAR(100),
     profesor VARCHAR(100),
+    color VARCHAR(7) DEFAULT '#FF5733',
     FOREIGN KEY (usuario_id) REFERENCES usuarios(id),
-    color VARCHAR(7) DEFAULT '#FF5733'
+    UNIQUE (usuario_id, nombre)
 );
-ALTER TABLE materias ADD UNIQUE (usuario_id, nombre);
 -- SELECT * FROM materias;
 
 CREATE TABLE horarios (
@@ -49,8 +50,11 @@ CREATE TABLE tareas (
 
 /*---------------DATOS DE PRUEBA-------------*/
 
-INSERT INTO usuarios (nombre, email, password)
-VALUES ('Momo', 'momo@test.com', '123456');
+INSERT INTO usuarios (nombre, email, password,rol)
+VALUES ('Momo', 'momo@test.com', '$2b$10$r7xYGFmFKtHxdpiPAeFPi.8a2tx2mF61g6UMjZcEwfZK7P/3LSvI.', 'user');
+
+INSERT INTO usuarios (nombre, email, password,rol)
+VALUES ('admin', 'admin@test.com', '$2b$10$r7xYGFmFKtHxdpiPAeFPi.8a2tx2mF61g6UMjZcEwfZK7P/3LSvI.', 'admin');
 
 INSERT INTO materias (usuario_id, nombre, profesor) VALUES
 (1, 'Matemáticas', 'Dr. García'),
@@ -58,15 +62,15 @@ INSERT INTO materias (usuario_id, nombre, profesor) VALUES
 (1, 'Física', 'Dr. Ramírez');
 
 INSERT INTO horarios (materia_id, dia, hora_inicio, hora_fin) VALUES
-(1, 'Lunes', '07:00:00', '08:00:00'),
-(1, 'Miercoles', '07:00:00', '08:00:00'),
-(2, 'Martes', '08:00:00', '09:00:00'),
-(2, 'Jueves', '08:00:00', '09:00:00'),
-(3, 'Viernes', '09:00:00', '10:00:00');
+(2, 'Lunes', '07:00:00', '08:00:00'),
+(2, 'Miercoles', '07:00:00', '08:00:00'),
+(3, 'Martes', '08:00:00', '09:00:00'),
+(3, 'Jueves', '08:00:00', '09:00:00'),
+(4, 'Viernes', '09:00:00', '10:00:00');
 
 INSERT INTO tareas (usuario_id, materia_id, titulo, descripcion, fecha_entrega, estado) VALUES
-(1, 1, 'Tarea álgebra', 'Resolver ejercicios 1-10', '2026-04-15 23:59:00', 'pendiente'),
-(1, 2, 'Proyecto web', 'Crear página con Node y HBS', '2026-04-18 20:00:00', 'pendiente'),
-(1, 3, 'Reporte física', 'Investigar leyes de Newton', '2026-04-16 18:00:00', 'completada');
+(1, 2, 'Tarea álgebra', 'Resolver ejercicios 1-10', '2026-04-15 23:59:00', 'pendiente'),
+(1, 3, 'Proyecto web', 'Crear página con Node y HBS', '2026-04-18 20:00:00', 'pendiente'),
+(1, 4, 'Reporte física', 'Investigar leyes de Newton', '2026-04-16 18:00:00', 'completada');
 
 /*---------------PRUEBAS QUERY------------*/
