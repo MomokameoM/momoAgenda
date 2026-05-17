@@ -1,0 +1,14 @@
+1.-Tras descomprimir la pagina, asegurarse de tener instalado node.js y MYSQL
+2.-En la raiz del proyecto correr la siguiente linea:
+
+        npm i
+   
+   Esto instalara todas las dependencias del proyecto
+3.-Abir el archivo "db.sql", copiar su contenido y ejecutar en MYSQL para crear la bd de la app.
+4.-En la raiz del proyecto correr lo siguiente para ejecutar la app:
+        
+        node app.js
+
+5.-En consola dira que se conecto correctamente a la db local y donde esta corriendo, que sera: http://localhost:3000
+6.-Registrar 2 usuarios para probar el sistema correctamente (no los puedo insertar desde la query de datos de prueba porque 
+    no se hashe la contraseña y no permitiria el inicio de sesion al momento de validar), Ej. Usuario1 y Usuario2
