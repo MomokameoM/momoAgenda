@@ -18,7 +18,20 @@ const app = express();
 
 
 // CONFIGURACIÓN COMPLETA
-app.engine('hbs', exphbs.engine({extname: '.hbs'}));
+//app.engine('hbs', exphbs.engine({extname: '.hbs'}));
+app.engine('hbs', exphbs.engine({
+
+    extname: '.hbs',
+
+    helpers: {
+
+        eq: function(a, b) {
+            return a === b;
+        }
+
+    }
+
+}));
 
 app.set('view engine', 'hbs');
 app.set('views', './views');
@@ -79,11 +92,11 @@ function admin(req, res, next) {
 
 
 
-/*---------------- VISTA PARA INICIO----------------- */
+/*--------------------------------- VISTA PARA INICIO--------------------------------- */
 app.get('/', guest,(req, res) => {
     res.render('home', { titulo: 'Inicio' });
 });
-//---------------- VISTA PARA TABLA HORARIO-----------------
+//------------------------------- VISTA PARA TABLA HORARIO-----------------------------
 
 app.get('/horario', auth, (req, res) => {
   const usuario_id = req.session.userId;
@@ -174,12 +187,13 @@ app.get('/horario', auth, (req, res) => {
 });
 
 
-//---------------- VISTA PARA TABLA AGENDA-----------------
+//--------------------------------- VISTA PARA TABLA AGENDA--------------------------------
+
 app.get('/agenda', auth, (req, res) => {
     const usuario_id = req.session.userId;
 
   db.query(
-    `SELECT t.*, m.nombre AS materia
+    `SELECT t.*, m.nombre AS materia, m.color 
      FROM tareas t
      JOIN materias m ON t.materia_id = m.id
      WHERE t.usuario_id = ?
@@ -191,18 +205,452 @@ app.get('/agenda', auth, (req, res) => {
     }
   );
 });
-//---------------- VISTA PARA TABLA MATERIAS-----------------
+
+//vista para crear nueva tarea
+app.get('/agenda/nueva', auth, (req, res) => {
+
+    const usuario_id = req.session.userId;
+
+    const query = `
+        SELECT *
+        FROM materias
+        WHERE usuario_id = ?
+        ORDER BY nombre
+    `;
+
+    db.query(
+        query,
+        [usuario_id],
+        (err, materias) => {
+
+            if (err) {
+                console.log(err);
+                return res.send('Error');
+            }
+
+            res.render('agenda/crear_tarea', {
+                materias
+            });
+        }
+    );
+});
+
+//POST para crear nueva tarea
+app.post('/agenda/nueva', auth, (req, res) => {
+
+    const usuario_id = req.session.userId;
+
+    const {
+        materia_id,
+        titulo,
+        descripcion,
+        fecha_entrega
+    } = req.body;
+
+    if (!titulo.trim()) {
+        return res.send('Titulo requerido');
+    }
+
+    const query = `
+        INSERT INTO tareas
+        (
+            usuario_id,
+            materia_id,
+            titulo,
+            descripcion,
+            fecha_entrega
+        )
+        VALUES (?, ?, ?, ?, ?)
+    `;
+
+    db.query(
+        query,
+        [
+            usuario_id,
+            materia_id,
+            titulo,
+            descripcion,
+            fecha_entrega
+        ],
+        (err) => {
+
+            if (err) {
+                console.log(err);
+                return res.send('Error');
+            }
+
+            res.redirect('/agenda');
+        }
+    );
+});
+
+//vista para editar tarea
+app.get('/agenda/editar/:id', auth, (req, res) => {
+
+    const usuario_id = req.session.userId;
+
+    const tarea_id = req.params.id;
+
+    const queryTarea = `
+        SELECT *
+        FROM tareas
+        WHERE id = ?
+        AND usuario_id = ?
+    `;
+
+    const queryMaterias = `
+        SELECT *
+        FROM materias
+        WHERE usuario_id = ?
+    `;
+
+    db.query(
+        queryTarea,
+        [tarea_id, usuario_id],
+        (err, tareaResults) => {
+
+            if (err) {
+                console.log(err);
+                return res.send('Error');
+            }
+
+            if (tareaResults.length === 0) {
+                return res.send('Tarea no encontrada');
+            }
+
+            db.query(
+                queryMaterias,
+                [usuario_id],
+                (err, materiasResults) => {
+
+                    if (err) {
+                        console.log(err);
+                        return res.send('Error');
+                    }
+
+                    res.render('agenda/editar_tarea', {
+                        tarea: tareaResults[0],
+                        materias: materiasResults
+                    });
+                }
+            );
+        }
+    );
+});
+
+//POST para editar tarea
+app.post('/agenda/editar/:id', auth, (req, res) => {
+
+    const usuario_id = req.session.userId;
+
+    const tarea_id = req.params.id;
+
+    const {
+        materia_id,
+        titulo,
+        descripcion,
+        fecha_entrega,
+        estado
+    } = req.body;
+
+    if (!titulo.trim()) {
+        return res.send('Titulo requerido');
+    }
+
+    const query = `
+        UPDATE tareas
+        SET
+            materia_id = ?,
+            titulo = ?,
+            descripcion = ?,
+            fecha_entrega = ?,
+            estado = ?
+        WHERE id = ?
+        AND usuario_id = ?
+    `;
+
+    db.query(
+        query,
+        [
+            materia_id,
+            titulo,
+            descripcion,
+            fecha_entrega,
+            estado,
+            tarea_id,
+            usuario_id
+        ],
+        (err) => {
+
+            if (err) {
+                console.log(err);
+                return res.send('Error');
+            }
+
+            res.redirect('/agenda');
+        }
+    );
+});
+
+//POST para cambiar estado de tarea
+app.post('/agenda/toggleEstado/:id', auth, (req, res) => {
+
+    const usuario_id = req.session.userId;
+
+    const tarea_id = req.params.id;
+
+    const queryBuscar = `
+        SELECT estado
+        FROM tareas
+        WHERE id = ?
+        AND usuario_id = ?
+    `;
+
+    db.query(
+        queryBuscar,
+        [tarea_id, usuario_id],
+        (err, results) => {
+
+            if (err) {
+                console.log(err);
+                return res.send('Error');
+            }
+
+            if (results.length === 0) {
+                return res.send('Tarea no encontrada');
+            }
+
+            const estadoActual = results[0].estado;
+
+            const nuevoEstado =
+                estadoActual === 'pendiente'
+                ? 'completada'
+                : 'pendiente';
+
+            const queryUpdate = `
+                UPDATE tareas
+                SET estado = ?
+                WHERE id = ?
+                AND usuario_id = ?
+            `;
+
+            db.query(
+                queryUpdate,
+                [
+                    nuevoEstado,
+                    tarea_id,
+                    usuario_id
+                ],
+                (err) => {
+
+                    if (err) {
+                        console.log(err);
+                        return res.send('Error');
+                    }
+
+                    res.redirect('/agenda');
+                }
+            );
+        }
+    );
+});
+
+//POST para eliminar tarea
+app.post('/agenda/eliminar/:id', auth, (req, res) => {
+
+    const usuario_id = req.session.userId;
+
+    const tarea_id = req.params.id;
+
+    const query = `
+        DELETE FROM tareas
+        WHERE id = ?
+        AND usuario_id = ?
+    `;
+
+    db.query(
+        query,
+        [tarea_id, usuario_id],
+        (err) => {
+
+            if (err) {
+                console.log(err);
+                return res.send('Error');
+            }
+
+            res.redirect('/agenda');
+        }
+    );
+});
+
+
+
+//------------------------------ VISTA PARA TABLA MATERIAS--------------------------------
+//ver materias del usuario logueado
 app.get('/materias', auth, (req, res) => {
     const usuario_id = req.session.userId;
     db.query(
-    'SELECT * FROM materias WHERE usuario_id = ?', [usuario_id],
+    'SELECT * FROM materias WHERE usuario_id = ? ORDER BY updated_at DESC', [usuario_id],
     (err, results) => {
       if (err) throw err;
       res.render('materias', { titulo: 'Materias', materias: results });
     }
   );
 });
-//--------------------------- VISTA PARA ADMIN------------------------
+
+//vista para crear nueva materia
+app.get('/materias/nueva', auth, (req, res) => {
+    res.render('materias/crear_materia', {
+        titulo: 'Materia nueva'
+    });
+});
+
+//POST para crear nueva materia
+app.post('/materias/nueva', auth, (req, res) => {
+
+    const usuario_id = req.session.userId;
+
+    const {
+        nombre,
+        profesor,
+        color
+    } = req.body;
+    
+    //validación simple de espacio en blanco
+    if (!nombre.trim()||!profesor.trim()||!color.trim()) {
+    return res.send("Todos los campos son requeridos");
+    }
+
+    const query = `
+        INSERT INTO materias
+        (usuario_id, nombre, profesor, color)
+        VALUES (?, ?, ?, ?)
+    `;
+
+    db.query(
+        query,
+        [usuario_id, nombre, profesor, color],
+        (err) => {
+
+            if (err) {
+                console.log(err);
+                return res.send('Error al crear materia');
+            }
+
+            res.redirect('/materias');
+        }
+    );
+});
+
+//vista para editar materia
+app.get('/materias/editar/:id', auth, (req, res) => {
+
+    const usuario_id = req.session.userId;
+
+    const materia_id = req.params.id;
+
+    const query = `
+        SELECT *
+        FROM materias
+        WHERE id = ?
+        AND usuario_id = ?
+    `;
+
+    db.query(
+        query,
+        [materia_id, usuario_id],
+        (err, results) => {
+
+            if (err) {
+                console.log(err);
+                return res.send('Error');
+            }
+
+            if (results.length === 0) {
+                return res.send('Materia no encontrada');
+            }
+
+            res.render('materias/editar_materia', {
+                materia: results[0]
+            });
+        }
+    );
+});
+
+//POST para editar materia
+app.post('/materias/editar/:id', auth, (req, res) => {
+
+    const usuario_id = req.session.userId;
+
+    const materia_id = req.params.id;
+
+    const {
+        nombre,
+        profesor,
+        color
+    } = req.body;
+
+    if (!nombre.trim()||!profesor.trim()||!color.trim()) {
+        return res.send('Todos los campos son requeridos');
+    }
+
+    const query = `
+        UPDATE materias
+        SET nombre = ?, profesor = ?, color = ?
+        WHERE id = ?
+        AND usuario_id = ?
+    `;
+
+    db.query(
+        query,
+        [
+            nombre,
+            profesor,
+            color,
+            materia_id,
+            usuario_id
+        ],
+        (err) => {
+
+            if (err) {
+                console.log(err);
+                return res.send('Error al editar');
+            }
+
+            res.redirect('/materias');
+        }
+    );
+});
+
+//POST para eliminar materia
+app.post('/materias/eliminar/:id', auth, (req, res) => {
+
+    const usuario_id = req.session.userId;
+
+    const materia_id = req.params.id;
+
+    const query = `
+        DELETE FROM materias
+        WHERE id = ?
+        AND usuario_id = ?
+    `;
+
+    db.query(
+        query,
+        [materia_id, usuario_id],
+        (err) => {
+
+            if (err) {
+                console.log(err);
+                return res.send('Error al eliminar');
+            }
+
+            res.redirect('/materias');
+        }
+    );
+});
+
+//--------------------------------- VISTA PARA ADMIN--------------------------------
 app.get('/admin', admin, (req, res) => {
     res.render('admin', { titulo: 'Panel de Administración' });
 });
@@ -232,7 +680,7 @@ app.post("/compilar", async (req, res) => {
   res.render("admin/modoscript", { resultado });
 });
 
-//--------------------------- VISTA PARA LOGIN------------------------
+//----------------------------------- VISTA PARA LOGIN-------------------------------
 app.get('/login', guest, (req, res) => {
     res.render('login', { titulo: 'Login' });
 });
@@ -316,6 +764,7 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log('Servidor corriendo');
     console.log(`Servidor en puerto ${PORT}`);
+    console.log('Servidor en http://localhost:' + PORT);
 });
 /*
 app.listen(3000, () => {

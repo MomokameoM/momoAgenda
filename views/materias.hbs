@@ -1,28 +1,90 @@
 <div class="container text-center">
+
   <div class="row align-items-center">
-    <h1 id="titulo" class="pb-2"><b>Materias de {{username}}</b></h1>
+
+    <h1 id="titulo" class="pb-2">
+      <b>Materias de {{username}}</b>
+    </h1>
+
     <div class="col">
-        <table class="table table-light table-hover table-bordered" id="tabla">
+
+      <table class="table table-light table-hover table-bordered" id="tabla">
+
         <thead class="table-dark">
-            <tr>
-                <th scope="col">Materia</th>
-                <th scope="col">Profesor</th>
-            </tr>
+          <tr>
+            <th>Materia</th>
+            <th>Profesor</th>
+            <th>Acciones</th>
+          </tr>
         </thead>
+
         <tbody>
-            {{#each materias}}
-            <tr>
-                <td>{{this.nombre}}</td>
-                <td>{{this.profesor}}</td>
-            </tr>
-            {{/each}}
-        </table>
+
+          {{#each materias}}
+
+          <tr>
+
+            <td> <span class="badge" style="background-color: {{this.color}}; color: white;">
+                    {{this.nombre}} </span>
+            </td>
+
+            <td>{{this.profesor}}</td>
+
+            <td>
+
+              <a
+                href="/materias/editar/{{this.id}}"
+                class="btn btn-warning btn-sm"
+              >
+                Editar
+              </a>
+
+              <form
+                action="/materias/eliminar/{{this.id}}"
+                method="POST"
+                style="display:inline;"
+              >
+
+                <button
+                  type="submit"
+                  class="btn btn-danger btn-sm"
+                >
+                  Eliminar
+                </button>
+
+              </form>
+
+            </td>
+
+          </tr>
+
+          {{/each}}
+
+        </tbody>
+
+      </table>
+
     </div>
-    <div style="background-color: red;" class="col">
-      <p id="texto_normal" class="mt-4">Aqui puedes ver tus materias y manejarlas.</p>
-        <button type="button" class="btn btn-success">Agregar</button>
-        <button type="button" class="btn btn-danger">Eliminar</button>
-        <button type="button" class="btn btn-warning">Editar</button>
+
+    <div class="col">
+
+      <p id="texto_normal" class="mt-4">
+        Aqui puedes ver tus materias y manejarlas.
+      </p>
+
+      <a href="/materias/nueva">
+
+        <button
+          type="button"
+          class="btn btn-success"
+        >
+          Agregar
+        </button>
+
+      </a>
+
     </div>
+
   </div>
+
 </div>

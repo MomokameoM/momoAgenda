@@ -1,0 +1,52 @@
+<h1>Nueva tarea</h1>
+
+<form action="/agenda/nueva" method="POST">
+
+    <label>Título</label>
+
+    <input
+        type="text"
+        name="titulo"
+        required
+    >
+
+    <br><br>
+
+    <label>Descripción</label>
+
+    <textarea
+        name="descripcion"
+    ></textarea>
+
+    <br><br>
+
+    <label>Materia</label>
+
+    <select name="materia_id">
+
+        {{#each materias}}
+
+        <option value="{{this.id}}">
+            {{this.nombre}}
+        </option>
+
+        {{/each}}
+
+    </select>
+
+    <br><br>
+
+    <label>Fecha entrega</label>
+
+    <input
+        type="datetime-local"
+        name="fecha_entrega"
+    >
+
+    <br><br>
+
+    <button type="submit">
+        Crear tarea
+    </button>
+
+</form>

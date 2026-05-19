@@ -1,0 +1,43 @@
+<h1>Editar materia</h1>
+
+<form
+    action="/materias/editar/{{materia.id}}"
+    method="POST"
+>
+
+    <label>Nombre</label>
+
+    <input
+        type="text"
+        name="nombre"
+        value="{{materia.nombre}}"
+        required
+    >
+
+    <br><br>
+
+    <label>Profesor</label>
+
+    <input
+        type="text"
+        name="profesor"
+        value="{{materia.profesor}}"
+    >
+
+    <br><br>
+
+    <label>Color</label>
+
+    <input
+        type="color"
+        name="color"
+        value="{{materia.color}}"
+    >
+
+    <br><br>
+
+    <button type="submit">
+        Guardar cambios
+    </button>
+
+</form>

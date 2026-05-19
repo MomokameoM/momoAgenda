@@ -1,8 +1,11 @@
 /*---------CREAR BASE----------*/ 
-
+/*
 drop database if exists momoAgenda;
 create database if not exists momoAgenda;
-use momoAgenda;
+use momoAgenda;*/
+drop database if exists u601ae9j9854yz56;
+create database if not exists u601ae9j9854yz56;
+use u601ae9j9854yz56;
 
 /*-----------------------------TABLAS-----------------------*/
 CREATE TABLE usuarios (
@@ -66,11 +69,11 @@ INSERT INTO horarios (materia_id, dia, hora_inicio, hora_fin) VALUES
 (2, 'Miercoles', '07:00:00', '08:00:00'),
 (3, 'Martes', '08:00:00', '09:00:00'),
 (3, 'Jueves', '08:00:00', '09:00:00'),
-(4, 'Viernes', '09:00:00', '10:00:00');
+(3, 'Viernes', '09:00:00', '10:00:00');
 
 INSERT INTO tareas (usuario_id, materia_id, titulo, descripcion, fecha_entrega, estado) VALUES
 (1, 2, 'Tarea álgebra', 'Resolver ejercicios 1-10', '2026-04-15 23:59:00', 'pendiente'),
 (1, 3, 'Proyecto web', 'Crear página con Node y HBS', '2026-04-18 20:00:00', 'pendiente'),
-(1, 4, 'Reporte física', 'Investigar leyes de Newton', '2026-04-16 18:00:00', 'completada');
+(1, 3, 'Reporte física', 'Investigar leyes de Newton', '2026-04-16 18:00:00', 'completada');
 
 /*---------------PRUEBAS QUERY------------*/

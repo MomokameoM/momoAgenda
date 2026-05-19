@@ -1,34 +1,145 @@
 <div class="container text-center">
+
   <div class="row align-items-center">
-    <h1 id="titulo" class="pb-2"><b>Agenda de {{username}}</b></h1>
+
+    <h1 id="titulo" class="pb-2">
+      <b>Agenda de {{username}}</b>
+    </h1>
+
     <div class="col">
-        <table class="table table-light table-hover table-bordered" id="tabla">
+
+      <table
+        class="table table-light table-hover table-bordered"
+        id="tabla"
+      >
+
         <thead class="table-dark">
-            <tr>
-                <th scope="col">Fecha</th>
-                <th scope="col">Materia</th>
-                <th scope="col">Tarea</th>
-                <th scope="col">Estado</th>
-            </tr>
+
+          <tr>
+            <th>Fecha</th>
+            <th>Materia</th>
+            <th>Tarea</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+
         </thead>
+
         <tbody>
-            {{#each agenda}}
-            <tr>
-                <td>{{this.fecha_entrega}}</td>
-                <td>{{this.materia}}</td>
-                <td>{{this.titulo}}</td>
-                <td>{{this.estado}}</td>
-            </tr>
-            {{/each}}
+
+          {{#each agenda}}
+
+          <tr>
+
+            <td>{{this.fecha_entrega}}</td>
+
+            <td>
+                <span class="badge" style=" background-color: {{this.color}}; color: white;">
+                        {{this.materia}}
+                </span>
+            </td>
+
+            <td>{{this.titulo}}</td>
+
+            <td>
+
+              {{#if (eq this.estado "completada")}}
+
+                <span class="badge bg-success">
+                  Completada
+                </span>
+
+              {{else}}
+
+                <span class="badge bg-warning text-dark">
+                  Pendiente
+                </span>
+
+              {{/if}}
+
+            </td>
+
+            <td><!-- ACCIONES -->
+                <form
+                    action="/agenda/toggleEstado/{{this.id}}"
+                    method="POST"
+                    style="display:inline;"
+                >
+
+                    {{#if (eq this.estado "pendiente")}}
+
+                        <button
+                            type="submit"
+                            class="btn btn-success btn-sm"
+                        >
+                            Completar
+                        </button>
+
+                    {{else}}
+
+                        <button
+                            type="submit"
+                            class="btn btn-secondary btn-sm"
+                        >
+                            Reabrir
+                        </button>
+
+                    {{/if}}
+
+                </form>
+              <a
+                href="/agenda/editar/{{this.id}}"
+                class="btn btn-warning btn-sm"
+              >
+                Editar
+              </a>
+
+              <form
+                action="/agenda/eliminar/{{this.id}}"
+                method="POST"
+                style="display:inline;"
+              >
+
+                <button
+                  type="submit"
+                  class="btn btn-danger btn-sm"
+                >
+                  Eliminar
+                </button>
+
+              </form>
+
+            </td>
+
+          </tr>
+
+          {{/each}}
+
         </tbody>
 
-        </table>
+      </table>
+
     </div>
-    <div style="background-color: red;" class="col">
-      <p id="texto_normal" class="mt-4">Aqui puedes ver tu agenda con tus actividades organizadas, agregar, modificarlas y eliminarlas según sea necesario.</p>
-        <button type="button" class="btn btn-success">Agregar</button>
-        <button type="button" class="btn btn-danger">Eliminar</button>
-        <button type="button" class="btn btn-warning">Editar</button>
+
+    <div class="col">
+
+      <p id="texto_normal" class="mt-4">
+        Aqui puedes ver tu agenda.
+      </p>
+
+      <a href="/agenda/nueva">
+
+        <button
+          type="button"
+          class="btn btn-success"
+        >
+          Agregar
+        </button>
+
+      </a>
+
     </div>
+
   </div>
+
 </div>
