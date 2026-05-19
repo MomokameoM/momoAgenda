@@ -7,6 +7,14 @@ const bcrypt = require('bcrypt');
 //const { engine } = require('express-handlebars');
 const exphbs = require('express-handlebars');
 
+/*-----------FECHAS----------- */
+const dayjs = require('dayjs');
+require('dayjs/locale/es');
+dayjs.locale('es');
+
+/*-----------NOTIFICACIONES ALERTAS----------- */
+const flash = require('connect-flash');
+
 /*-----------SESIÓN----------- */
 const session = require('express-session');
 
@@ -18,20 +26,33 @@ const app = express();
 
 
 // CONFIGURACIÓN COMPLETA
-//app.engine('hbs', exphbs.engine({extname: '.hbs'}));
+
+
+/**-----------HANDLEBARS CONFIG----------- */
 app.engine('hbs', exphbs.engine({
 
     extname: '.hbs',
-
+    partialsDir: './views/partials',
+    
     helpers: {
 
         eq: function(a, b) {
             return a === b;
+        },
+
+        formatDate: function(date) {
+
+            return dayjs(date)
+                .format('dddd D [de] MMMM - HH:mm');
+
         }
 
     }
 
 }));
+
+  
+
 
 app.set('view engine', 'hbs');
 app.set('views', './views');
@@ -47,6 +68,11 @@ app.use(session({
     resave: false,
     saveUninitialized: false
 }));
+
+app.use(flash());//ALERTAS
+
+
+/*--------------------------- MIDDLEWARES ------------------*/
 
 //verificamos si el usuario está logueado
 app.use((req, res, next) => {
@@ -90,6 +116,19 @@ function admin(req, res, next) {
     }
 }
 
+// Middleware para pasar mensajes flash a las vistas
+app.use((req, res, next) => {
+
+    res.locals.success =
+        req.flash('success');
+
+    res.locals.error =
+        req.flash('error');
+
+    next();
+
+});
+
 
 
 /*--------------------------------- VISTA PARA INICIO--------------------------------- */
@@ -97,93 +136,492 @@ app.get('/', guest,(req, res) => {
     res.render('home', { titulo: 'Inicio' });
 });
 //------------------------------- VISTA PARA TABLA HORARIO-----------------------------
-
 app.get('/horario', auth, (req, res) => {
-  const usuario_id = req.session.userId;
 
-  const query = `
-    SELECT m.nombre, m.color, m.profesor, h.dia, h.hora_inicio, h.hora_fin
-    FROM horarios h
-    JOIN materias m ON h.materia_id = m.id
-    WHERE m.usuario_id = ?
-    ORDER BY h.dia, h.hora_inicio
-  `;
+    const usuario_id = req.session.userId;
 
-  db.query(query, [usuario_id], (err, results) => {
-    if (err) throw err;console.log(results);
+    const queryHorarios = `
 
-    const dias = ['Lunes','Martes','Miercoles','Jueves','Viernes'];
+        SELECT
 
-    let horas = [];
-    for (let i = 7; i <= 14; i++) {
-      horas.push(`${i.toString().padStart(2,'0')}:00:00`);
-    }
+            h.id,
+            h.materia_id,
+            h.dia,
+            h.hora_inicio,
+            h.hora_fin,
 
-    let tabla = {};
+            m.nombre,
+            m.color,
+            m.profesor
 
-    // inicializar
-    horas.forEach(hora => {
-      tabla[hora] = {};
-      dias.forEach(dia => {
-        tabla[hora][dia] = { materia: null, rowspan: 1, mostrar: true };
-      });
-    });
+        FROM horarios h
 
-    // llenar datos
-    results.forEach(item => {
-      const dia = item.dia;
+        JOIN materias m
+        ON h.materia_id = m.id
 
-      let inicio = parseInt(item.hora_inicio.split(':')[0]);
-      let fin = parseInt(item.hora_fin.split(':')[0]);
+        WHERE m.usuario_id = ?
 
-      let duracion = fin - inicio;
+        ORDER BY h.dia, h.hora_inicio
 
-      let horaInicioKey = `${inicio.toString().padStart(2,'0')}:00:00`;
+    `;
 
-      // seguridad (evita errores si algo no coincide)
-      if (!tabla[horaInicioKey] || !tabla[horaInicioKey][dia]) return;
+    db.query(
+        queryHorarios,
+        [usuario_id],
+        (err, results) => {
 
-      tabla[horaInicioKey][dia] = {
-        materia: item.nombre,
-        color: item.color,
-        profesor: item.profesor,
-        rowspan: duracion,
-        mostrar: true
-      };
+            if (err) {
+                console.log(err);
+                return res.send('Error');
+            }
 
-      for (let i = inicio + 1; i < fin; i++) {
-        let horaKey = `${i.toString().padStart(2,'0')}:00:00`;
+            const dias = [
+                'Lunes',
+                'Martes',
+                'Miercoles',
+                'Jueves',
+                'Viernes'
+            ];
 
-        if (tabla[horaKey] && tabla[horaKey][dia]) {
-          tabla[horaKey][dia] = {
-            materia: null,
-            rowspan: 0,
-            mostrar: false
-          };
+            let horas = [];
+
+            // HORAS POR DEFECTO
+
+            let horaMin = 7;
+            let horaMax = 14;
+
+            // SI HAY HORARIOS
+
+            if (results.length > 0) {
+
+                let inicios = results.map(item =>
+
+                    parseInt(
+                        item.hora_inicio.split(':')[0]
+                    )
+
+                );
+
+                let finales = results.map(item =>
+
+                    parseInt(
+                        item.hora_fin.split(':')[0]
+                    )
+
+                );
+
+                horaMin = Math.min(...inicios);
+
+                horaMax = Math.max(...finales);
+
+            }
+            // GENERAR HORAS DINÁMICAS
+
+            for (let i = horaMin; i <= horaMax; i++) {
+
+                horas.push(
+                    `${i.toString().padStart(2,'0')}:00:00`
+                );
+
+            }
+
+            let tabla = {};
+
+
+            // INICIALIZAR TABLA
+
+            horas.forEach(hora => {
+
+                tabla[hora] = {};
+
+                dias.forEach(dia => {
+
+                    tabla[hora][dia] = {
+
+                        materia: null,
+                        rowspan: 1,
+                        mostrar: true
+
+                    };
+
+                });
+
+            });
+
+
+
+            // LLENAR DATOS
+
+            results.forEach(item => {
+
+                const dia = item.dia;
+
+                let inicio =
+                    parseInt(
+                        item.hora_inicio.split(':')[0]
+                    );
+
+                let fin =
+                    parseInt(
+                        item.hora_fin.split(':')[0]
+                    );
+
+                let duracion = fin - inicio;
+
+                let horaInicioKey =
+                    `${inicio.toString().padStart(2,'0')}:00:00`;
+
+
+
+                // SEGURIDAD
+
+                if (
+                    !tabla[horaInicioKey]
+                    ||
+                    !tabla[horaInicioKey][dia]
+                ) return;
+
+
+
+                tabla[horaInicioKey][dia] = {
+
+                    materia: item.nombre,
+
+                    color: item.color,
+
+                    profesor: item.profesor,
+
+                    rowspan: duracion,
+
+                    mostrar: true
+
+                };
+
+
+
+                for (let i = inicio + 1; i < fin; i++) {
+
+                    let horaKey =
+                        `${i.toString().padStart(2,'0')}:00:00`;
+
+                    if (
+                        tabla[horaKey]
+                        &&
+                        tabla[horaKey][dia]
+                    ) {
+
+                        tabla[horaKey][dia] = {
+
+                            materia: null,
+
+                            rowspan: 0,
+
+                            mostrar: false
+
+                        };
+
+                    }
+
+                }
+
+            });
+
+
+
+            let filas = [];
+
+
+
+            horas.forEach(hora => {
+
+                let fila = {
+
+                    hora,
+                    dias: []
+
+                };
+
+                dias.forEach(dia => {
+
+                    fila.dias.push(
+                        tabla[hora][dia]
+                    );
+
+                });
+
+                filas.push(fila);
+
+            });
+
+
+
+            // QUERY MATERIAS
+
+            const queryMaterias = `
+
+                SELECT *
+                FROM materias
+                WHERE usuario_id = ?
+
+            `;
+
+            db.query(
+                queryMaterias,
+                [usuario_id],
+                (err, materias) => {
+
+                    if (err) {
+                        console.log(err);
+                        return res.send('Error');
+                    }
+
+
+
+                    // ÚNICO RENDER
+
+                    res.render('horario', {
+
+                        dias,
+                        filas,
+
+                        horarios: results,
+
+                        materias
+
+                    });
+
+                }
+            );
+
         }
-      }console.log(item.dia);
-    });
+    );
 
-    let filas = [];
+});
 
-      horas.forEach(hora => {
-        let fila = {
-          hora,
-          dias: []
-        };
+//post para crear nuevo horario
+app.post('/horario/nuevo', auth, (req, res) => {
 
-        dias.forEach(dia => {
-          fila.dias.push(tabla[hora][dia]);
-        });
+    const {
+        materia_id,
+        dia,
+        hora_inicio,
+        hora_fin
+    } = req.body;
 
-        filas.push(fila);
-      });
-      
-      res.render('horario', {
-        dias,
-        filas
-      });
-  });
+    const query = `
+        INSERT INTO horarios
+        (
+            materia_id,
+            dia,
+            hora_inicio,
+            hora_fin
+        )
+        VALUES (?, ?, ?, ?)
+    `;
+
+    db.query(
+        query,
+        [
+            materia_id,
+            dia,
+            hora_inicio,
+            hora_fin
+        ],
+        (err) => {
+
+            if (err) {
+                console.log(err);
+                req.flash('error', 'Error al crear horario');
+                return res.redirect('/horario/nuevo');
+            }
+
+            req.flash('success', 'Horario creado');
+            res.redirect('/horario');
+        }
+    );
+});
+
+//POST para eliminar horario
+app.post('/horario/eliminar/:id', auth, (req, res) => {
+
+    const horario_id = req.params.id;
+
+    const usuario_id = req.session.userId;
+
+    const query = `
+        DELETE h
+
+        FROM horarios h
+
+        JOIN materias m
+        ON h.materia_id = m.id
+
+        WHERE h.id = ?
+        AND m.usuario_id = ?
+    `;
+
+    db.query(
+        query,
+        [horario_id, usuario_id],
+        (err) => {
+
+            if (err) {
+                console.log(err);
+                return res.send('Error');
+            }
+            req.flash('success', 'Horario eliminado');
+            res.redirect('/horario');
+        }
+    );
+});
+
+//vista para editar horario
+app.get('/horario/editar/:id', auth, (req, res) => {
+
+    const horario_id = req.params.id;
+
+    const usuario_id = req.session.userId;
+
+
+
+    const queryHorario = `
+
+        SELECT
+            h.*
+        FROM horarios h
+
+        JOIN materias m
+        ON h.materia_id = m.id
+
+        WHERE h.id = ?
+        AND m.usuario_id = ?
+
+    `;
+
+
+
+    const queryMaterias = `
+
+        SELECT *
+        FROM materias
+        WHERE usuario_id = ?
+
+    `;
+
+
+
+    db.query(
+        queryHorario,
+        [horario_id, usuario_id],
+        (err, horarioResults) => {
+
+            if (err) {
+                console.log(err);
+                return res.send('Error');
+            }
+
+            if (horarioResults.length === 0) {
+                req.flash('error', 'Horario no encontrado');
+                return res.redirect('/horario');
+            }
+
+
+
+            db.query(
+                queryMaterias,
+                [usuario_id],
+                (err, materiasResults) => {
+
+                    if (err) {
+                        console.log(err);
+                        req.flash('error', 'Error al cargar materias');
+                        return res.redirect('/horario');
+                    }
+                    req.flash('success', 'Editando horario de ' + horarioResults[0].dia + ' a las ' + horarioResults[0].hora_inicio);
+                    res.render('horario/editar_horario', {
+
+                        horario:
+                            horarioResults[0],
+
+                        materias:
+                            materiasResults
+
+                    });
+
+                }
+            );
+
+        }
+    );
+
+});
+
+
+//POST para editar horario
+app.post('/horario/editar/:id', auth, (req, res) => {
+
+    const horario_id = req.params.id;
+
+    const usuario_id = req.session.userId;
+
+    const {
+
+        materia_id,
+        dia,
+        hora_inicio,
+        hora_fin
+
+    } = req.body;
+
+
+
+    const query = `
+
+        UPDATE horarios h
+
+        JOIN materias m
+        ON h.materia_id = m.id
+
+        SET
+
+            h.materia_id = ?,
+            h.dia = ?,
+            h.hora_inicio = ?,
+            h.hora_fin = ?
+
+        WHERE h.id = ?
+        AND m.usuario_id = ?
+
+    `;
+
+
+
+    db.query(
+        query,
+        [
+
+            materia_id,
+            dia,
+            hora_inicio,
+            hora_fin,
+
+            horario_id,
+            usuario_id
+
+        ],
+        (err) => {
+
+            if (err) {
+                console.log(err);
+                req.flash('error', 'Error al editar horario');
+                return res.redirect('/horario');
+            }
+            req.flash('success', 'Horario actualizado');
+            res.redirect('/horario');
+
+        }
+    );
+
 });
 
 
@@ -193,11 +631,24 @@ app.get('/agenda', auth, (req, res) => {
     const usuario_id = req.session.userId;
 
   db.query(
-    `SELECT t.*, m.nombre AS materia, m.color 
-     FROM tareas t
-     JOIN materias m ON t.materia_id = m.id
-     WHERE t.usuario_id = ?
-     ORDER BY t.fecha_entrega`,
+    `SELECT t.*, m.nombre AS materia, m.color,
+    (t.estado = 'pendiente' AND t.fecha_entrega < NOW() )
+    AS vencida FROM tareas t JOIN materias m ON t.materia_id = m.id
+    WHERE t.usuario_id = ? ORDER BY CASE
+
+    WHEN
+        t.estado = 'pendiente'
+        AND t.fecha_entrega < NOW()
+
+    THEN 0
+
+    WHEN t.estado = 'pendiente'
+
+    THEN 1
+
+    ELSE 2
+
+    END,    t.fecha_entrega ASC`,
     [usuario_id],
     (err, results) => {
       if (err) throw err;
@@ -225,9 +676,10 @@ app.get('/agenda/nueva', auth, (req, res) => {
 
             if (err) {
                 console.log(err);
-                return res.send('Error');
+                req.flash('error', 'Error al cargar materias');
+                return res.redirect('/agenda');
             }
-
+            req.flash('success', 'Creando nueva tarea');
             res.render('agenda/crear_tarea', {
                 materias
             });
@@ -248,7 +700,8 @@ app.post('/agenda/nueva', auth, (req, res) => {
     } = req.body;
 
     if (!titulo.trim()) {
-        return res.send('Titulo requerido');
+        req.flash('error', 'Titulo requerido');
+        return res.redirect('/agenda/nueva');
     }
 
     const query = `
@@ -276,9 +729,11 @@ app.post('/agenda/nueva', auth, (req, res) => {
 
             if (err) {
                 console.log(err);
-                return res.send('Error');
+                req.flash('error', 'Error al crear tarea');
+                return res.redirect('/agenda/nueva');
             }
 
+            req.flash('success', 'Tarea creada');
             res.redirect('/agenda');
         }
     );
@@ -315,7 +770,8 @@ app.get('/agenda/editar/:id', auth, (req, res) => {
             }
 
             if (tareaResults.length === 0) {
-                return res.send('Tarea no encontrada');
+                req.flash('error', 'Tarea no encontrada');
+                return res.redirect('/agenda');
             }
 
             db.query(
@@ -327,7 +783,7 @@ app.get('/agenda/editar/:id', auth, (req, res) => {
                         console.log(err);
                         return res.send('Error');
                     }
-
+                    req.flash('success', 'Editando tarea ' + tareaResults[0].titulo);
                     res.render('agenda/editar_tarea', {
                         tarea: tareaResults[0],
                         materias: materiasResults
@@ -354,7 +810,8 @@ app.post('/agenda/editar/:id', auth, (req, res) => {
     } = req.body;
 
     if (!titulo.trim()) {
-        return res.send('Titulo requerido');
+        req.flash('error', 'Titulo requerido');
+        return res.redirect('/agenda/editar/' + tarea_id);
     }
 
     const query = `
@@ -384,9 +841,10 @@ app.post('/agenda/editar/:id', auth, (req, res) => {
 
             if (err) {
                 console.log(err);
-                return res.send('Error');
+                req.flash('error', 'Error al editar tarea');
+                return res.redirect('/agenda');
             }
-
+            req.flash('success', 'Tarea actualizada');
             res.redirect('/agenda');
         }
     );
@@ -417,7 +875,8 @@ app.post('/agenda/toggleEstado/:id', auth, (req, res) => {
             }
 
             if (results.length === 0) {
-                return res.send('Tarea no encontrada');
+                req.flash('error', 'Tarea no encontrada');
+                return res.redirect('/agenda');
             }
 
             const estadoActual = results[0].estado;
@@ -447,7 +906,7 @@ app.post('/agenda/toggleEstado/:id', auth, (req, res) => {
                         console.log(err);
                         return res.send('Error');
                     }
-
+                    req.flash('success', 'Tarea actualizada');
                     res.redirect('/agenda');
                 }
             );
@@ -475,9 +934,11 @@ app.post('/agenda/eliminar/:id', auth, (req, res) => {
 
             if (err) {
                 console.log(err);
-                return res.send('Error');
+                req.flash('error', 'Error al eliminar tarea');
+                return res.redirect('/agenda');
             }
 
+            req.flash('success', 'Tarea eliminada');
             res.redirect('/agenda');
         }
     );
@@ -534,9 +995,11 @@ app.post('/materias/nueva', auth, (req, res) => {
 
             if (err) {
                 console.log(err);
-                return res.send('Error al crear materia');
+                req.flash('error', 'Error al crear materia');
+                return res.redirect('/materias/nueva');
             }
 
+            req.flash('success', 'Materia creada');
             res.redirect('/materias');
         }
     );
@@ -567,9 +1030,10 @@ app.get('/materias/editar/:id', auth, (req, res) => {
             }
 
             if (results.length === 0) {
-                return res.send('Materia no encontrada');
+                req.flash('error', 'Materia no encontrada');
+                return res.redirect('/materias');
             }
-
+            req.flash('success', 'Editando materia ' + results[0].nombre);
             res.render('materias/editar_materia', {
                 materia: results[0]
             });
@@ -614,9 +1078,11 @@ app.post('/materias/editar/:id', auth, (req, res) => {
 
             if (err) {
                 console.log(err);
-                return res.send('Error al editar');
+                req.flash('error', 'Error al editar materia');
+                return res.redirect('/materias');
             }
 
+            req.flash('success', 'Materia actualizada');
             res.redirect('/materias');
         }
     );
@@ -642,9 +1108,10 @@ app.post('/materias/eliminar/:id', auth, (req, res) => {
 
             if (err) {
                 console.log(err);
-                return res.send('Error al eliminar');
+                req.flash('error', 'Error al eliminar materia');
+                return res.redirect('/materias');
             }
-
+            req.flash('success', 'Materia eliminada');
             res.redirect('/materias');
         }
     );
@@ -711,13 +1178,16 @@ app.post('/login', (req, res) => {
             req.session.username = user.nombre;
             req.session.rol = user.rol;
             if (user.rol === 'admin') {
+                req.flash('success', 'Bienvenido admin ' + user.nombre);
                 return res.redirect('/admin'); // Redirige a panel admin
             }else {
+                req.flash('success', 'Bienvenido ' + user.nombre);
                 return res.redirect('/horario'); // Redirige a horario
             }
             
         } else {
-            res.send("Contraseña incorrecta");
+            req.flash('error', 'Contraseña incorrecta');
+            res.redirect('/login');
         }
     });
 });
@@ -741,7 +1211,7 @@ app.post('/registro', async (req, res) => {
                 console.log(err);
                 return res.send("Error al registrar");
             }
-
+            req.flash('success', 'Registro exitoso, ya puedes iniciar sesión');
             res.redirect('/login');
         });
 

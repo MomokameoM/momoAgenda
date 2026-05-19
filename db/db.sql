@@ -3,6 +3,7 @@
 drop database if exists momoAgenda;
 create database if not exists momoAgenda;
 use momoAgenda;*/
+
 drop database if exists u601ae9j9854yz56;
 create database if not exists u601ae9j9854yz56;
 use u601ae9j9854yz56;
@@ -16,38 +17,83 @@ CREATE TABLE usuarios (
     rol ENUM('user', 'admin') DEFAULT 'user'    
 );
 -- SELECT * FROM usuarios;
-
 CREATE TABLE materias (
     id INT AUTO_INCREMENT PRIMARY KEY,
+
     usuario_id INT,
+
     nombre VARCHAR(100),
+
     profesor VARCHAR(100),
+
     color VARCHAR(7) DEFAULT '#FF5733',
-    FOREIGN KEY (usuario_id) REFERENCES usuarios(id),
+
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    updated_at TIMESTAMP
+    DEFAULT CURRENT_TIMESTAMP
+    ON UPDATE CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (usuario_id)
+    REFERENCES usuarios(id)
+    ON DELETE CASCADE,
+
     UNIQUE (usuario_id, nombre)
 );
 -- SELECT * FROM materias;
 
 CREATE TABLE horarios (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    materia_id INT,
-    dia ENUM('Lunes','Martes','Miercoles','Jueves','Viernes','Sabado','Domingo'),
+    materia_id INT NOT NULL,
+
+    dia ENUM(
+        'Lunes',
+        'Martes',
+        'Miercoles',
+        'Jueves',
+        'Viernes',
+        'Sabado',
+        'Domingo'
+    ),
+
     hora_inicio TIME,
     hora_fin TIME,
-    FOREIGN KEY (materia_id) REFERENCES materias(id)
-);
--- SELECT * FROM horarios;
 
+    FOREIGN KEY (materia_id)
+        REFERENCES materias(id)
+        ON DELETE CASCADE
+);
+
+-- SELECT * FROM horarios;
 CREATE TABLE tareas (
     id INT AUTO_INCREMENT PRIMARY KEY,
+
     usuario_id INT,
+
     materia_id INT,
+
     titulo VARCHAR(150),
+
     descripcion TEXT,
-    fecha_entrega DATE,
-    estado ENUM('pendiente', 'completada') DEFAULT 'pendiente',
-    FOREIGN KEY (usuario_id) REFERENCES usuarios(id),
-    FOREIGN KEY (materia_id) REFERENCES materias(id)
+
+    fecha_entrega DATETIME,
+
+    estado ENUM('pendiente', 'completada')
+    DEFAULT 'pendiente',
+
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    updated_at TIMESTAMP
+    DEFAULT CURRENT_TIMESTAMP
+    ON UPDATE CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (usuario_id)
+    REFERENCES usuarios(id)
+    ON DELETE CASCADE,
+
+    FOREIGN KEY (materia_id)
+    REFERENCES materias(id)
+    ON DELETE CASCADE
 );
 -- SELECT * FROM tareas;
 

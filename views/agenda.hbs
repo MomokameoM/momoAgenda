@@ -29,9 +29,9 @@
 
           {{#each agenda}}
 
-          <tr>
+          <tr {{#if this.vencida}} class="table-danger" {{/if}} >
 
-            <td>{{this.fecha_entrega}}</td>
+            <td>{{formatDate this.fecha_entrega}}</td>
 
             <td>
                 <span class="badge" style=" background-color: {{this.color}}; color: white;">
@@ -43,19 +43,29 @@
 
             <td>
 
-              {{#if (eq this.estado "completada")}}
+                {{#if (eq this.estado "completada")}}
 
-                <span class="badge bg-success">
-                  Completada
-                </span>
+                    <span class="badge bg-success">
+                        Completada
+                    </span>
 
-              {{else}}
+                {{else}}
 
-                <span class="badge bg-warning text-dark">
-                  Pendiente
-                </span>
+                    {{#if this.vencida}}
 
-              {{/if}}
+                        <span class="badge bg-danger">
+                            Vencida
+                        </span>
+
+                    {{else}}
+
+                        <span class="badge bg-warning text-dark">
+                            Pendiente
+                        </span>
+
+                    {{/if}}
+
+                {{/if}}
 
             </td>
 

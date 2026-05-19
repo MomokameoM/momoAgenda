@@ -1,0 +1,75 @@
+<h1>Editar horario</h1>
+
+<form
+    action="/horario/editar/{{horario.id}}"
+    method="POST"
+>
+
+    <label>Materia</label>
+
+    <select
+        name="materia_id"
+        class="form-select"
+    >
+
+        {{#each materias}}
+
+        <option value="{{this.id}}">
+
+            {{this.nombre}}
+
+        </option>
+
+        {{/each}}
+
+    </select>
+
+    <br>
+
+    <label>Día</label>
+
+    <select
+        name="dia"
+        class="form-select"
+    >
+
+        <option>Lunes</option>
+        <option>Martes</option>
+        <option>Miercoles</option>
+        <option>Jueves</option>
+        <option>Viernes</option>
+
+    </select>
+
+    <br>
+
+    <label>Hora inicio</label>
+
+    <input
+        type="time"
+        name="hora_inicio"
+        value="{{horario.hora_inicio}}"
+        class="form-control"
+    >
+
+    <br>
+
+    <label>Hora fin</label>
+
+    <input
+        type="time"
+        name="hora_fin"
+        value="{{horario.hora_fin}}"
+        class="form-control"
+    >
+
+    <br>
+
+    <button
+        type="submit"
+        class="btn btn-warning"
+    >
+        Guardar cambios
+    </button>
+
+</form>
