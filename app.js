@@ -45,6 +45,18 @@ app.engine('hbs', exphbs.engine({
             return dayjs(date)
                 .format('dddd D [de] MMMM - HH:mm');
 
+        },
+        isActive: function(basePath, currentPath) {
+
+            if(basePath === '/') {
+                return currentPath === '/'
+                    ? 'active'
+                    : '';
+            }
+
+            return currentPath.startsWith(basePath)
+                ? 'active'
+                : '';
         }
 
     }
@@ -128,6 +140,14 @@ app.use((req, res, next) => {
     next();
 
 });
+
+// Middleware para pasar la ruta actual a las vistas
+app.use((req, res, next) => {
+    res.locals.currentPath = req.path;
+    next();
+});
+
+
 
 
 

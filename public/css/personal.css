@@ -1,12 +1,105 @@
-#homeimg {
-    max-height: 50vh;
-}
-#texto_normal {
+p{
     font-size: 1.5rem;
 }
-#titulo {
-    font-size: 3rem;
-}
+
 #boton_personal {
     color: white;
+}
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Arial', sans-serif;
+    color: #ff0088;
+    font-size: 3rem;
+}
+/*----------------------------------------------------- navbar ---------------------------------------------------------------*/
+/* Fondo general */
+body{
+    background: #dff5f8;
+}
+
+/* Barra principal */
+.momo-navbar{
+    background: #c8e9ec;
+    border: 2px solid #9fd7de;
+    border-radius: 30px;
+    padding: 10px 15px;
+    margin: 10px;
+}
+
+/* Logo */
+.momo-brand{
+    background: #d9f1f3;
+    color: #7fbfc5 !important;
+    font-weight: bold;
+    border-radius: 25px;
+    padding: 12px 40px;
+    margin-right: 20px;
+}
+
+/* Links */
+.momo-link{
+    color: #89c5ca !important;
+    background: #d9f1f3;
+    border: 1px solid #9fd7de;
+    border-radius: 25px;
+    padding: 10px 28px !important;
+    margin-right: 15px;
+    transition: 0.3s;
+}
+
+/* Hover */
+.momo-link:hover{
+    background: #bce7eb;
+    transform: translateY(-2px);
+}
+
+/* Activo */
+.momo-link.active{
+    color: #ff0088 !important;
+    background: #bfeef2;
+    font-weight: bold;
+}
+/*---------------------------- home page -------------------- */
+.landing{
+    position: relative;
+    min-height: 75vh;
+}
+
+.footer-home{
+    position: absolute;
+    left: 5%;
+    bottom: 20px;
+
+    width: 90%;
+    height: 70px;
+
+    background: #9fd7de;
+    border-radius: 30px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    z-index: 1; /* detrás */
+}
+
+.miku-left{
+    position: absolute;
+
+    left: 40px;
+    bottom: -20px;
+
+    height: 220px;
+
+    z-index: 10; /* delante del footer */
+}
+
+.miku-right{
+    position: absolute;
+
+    right: 40px;
+    bottom: -20px;
+
+    height: 350px;
+
+    z-index: 10; /* delante del footer */
 }
