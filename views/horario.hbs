@@ -1,188 +1,238 @@
-<h1>Horario</h1>
+<h1 class="titulo-horario">
+    HORARIO
+</h1>
 
-<table border="1">
-  <tr>
-    <th>Hora</th>
-    {{#each dias}}
-      <th>{{this}}</th>
-    {{/each}}
-  </tr>
+<table class="tabla-horario">
 
-  {{#each filas}}
-  <tr>
-    <td>{{hora}}</td>
+<tr>
+
+    <th>HORA</th>
 
     {{#each dias}}
-      {{#if mostrar}}
-        <td rowspan="{{rowspan}}" style="background-color: {{color}};" >
-            <strong>{{materia}}</strong><br>
-            <small>{{profesor}}</small>
-        </td>
-      {{/if}}
+        <th>{{this}}</th>
     {{/each}}
 
-  </tr>
-  {{/each}}
+</tr>
+
+{{#each filas}}
+
+<tr>
+
+    <td class="hora-columna">
+        {{hora}}
+    </td>
+
+    {{#each dias}}
+
+        {{#if mostrar}}
+
+            <td
+                rowspan="{{rowspan}}"
+                class="bloque-materia"
+                style="background-color: {{color}};"
+            >
+
+                <strong>
+                    {{materia}}
+                </strong>
+
+                <br>
+
+                <small>
+                    {{profesor}}
+                </small>
+
+            </td>
+
+        {{/if}}
+
+    {{/each}}
+
+</tr>
+
+{{/each}}
+```
+
 </table>
 
-<hr>
+<hr class="separador-momo">
 
 <div class="row mt-4">
 
-    <div class="col">
+```
+<div class="col">
 
-        <h3>Agregar horario</h3>
+    <h3 class="subtitulo-momo">
+        Agregar horario
+    </h3>
 
-        <form action="/horario/nuevo" method="POST">
+    <form action="/horario/nuevo" method="POST">
 
-            <label>Materia</label>
+        <label class="label-momo">
+            Materia
+        </label>
 
-            <select
-                name="materia_id"
-                class="form-select"
-            >
+        <select
+            name="materia_id"
+            class="form-select"
+        >
 
-                {{#each materias}}
+            {{#each materias}}
 
                 <option value="{{this.id}}">
                     {{this.nombre}}
                 </option>
 
-                {{/each}}
+            {{/each}}
 
-            </select>
+        </select>
 
-            <br>
+        <br>
 
-            <label>Día</label>
+        <label class="label-momo">
+            Día
+        </label>
 
-            <select
-                name="dia"
-                class="form-select"
-            >
+        <select
+            name="dia"
+            class="form-select"
+        >
 
-                <option>Lunes</option>
-                <option>Martes</option>
-                <option>Miercoles</option>
-                <option>Jueves</option>
-                <option>Viernes</option>
+            <option>Lunes</option>
+            <option>Martes</option>
+            <option>Miercoles</option>
+            <option>Jueves</option>
+            <option>Viernes</option>
 
-            </select>
+        </select>
 
-            <br>
+        <br>
 
-            <label>Inicio</label>
+        <label class="label-momo">
+            Inicio
+        </label>
 
-            <input
-                type="time"
-                name="hora_inicio"
-                class="form-control"
-            >
+        <input
+            type="time"
+            name="hora_inicio"
+            class="form-control"
+        >
 
-            <br>
+        <br>
 
-            <label>Fin</label>
+        <label class="label-momo">
+            Fin
+        </label>
 
-            <input
-                type="time"
-                name="hora_fin"
-                class="form-control"
-            >
+        <input
+            type="time"
+            name="hora_fin"
+            class="form-control"
+        >
 
-            <br>
+        <br>
 
-            <button
-                type="submit"
-                class="btn btn-success"
-            >
-                Agregar
-            </button>
+        <button
+            type="submit"
+            class="btn-momo"
+        >
+            Agregar Horario
+        </button>
 
-        </form>
+    </form>
 
-    </div>
+</div>
 
-    <div class="col">
+<div class="col">
 
-        <h3>Bloques actuales</h3>
+    <h3 class="subtitulo-momo">
+        Bloques actuales
+    </h3>
 
-        <table class="table table-bordered">
+    <table class="tabla-bloques">
 
-            <thead class="table-dark">
+        <thead>
 
-                <tr>
-                    <th>Materia</th>
-                    <th>Día</th>
-                    <th>Hora</th>
-                    <th>Acciones</th>
-                </tr>
+            <tr>
 
-            </thead>
+                <th>Materia</th>
+                <th>Día</th>
+                <th>Hora</th>
+                <th>Acciones</th>
 
-            <tbody>
+            </tr>
 
-                {{#each horarios}}
+        </thead>
 
-                <tr>
+        <tbody>
 
-                    <td>
+            {{#each horarios}}
 
-                        <span
-                            class="badge"
-                            style="
-                                background-color:
-                                {{this.color}};
-                            "
+            <tr>
+
+                <td>
+
+                    <span
+                        class="badge"
+                        style="
+                            background-color:
+                            {{this.color}};
+                        "
+                    >
+
+                        {{this.nombre}}
+
+                    </span>
+
+                </td>
+
+                <td>
+                    {{this.dia}}
+                </td>
+
+                <td>
+
+                    {{this.hora_inicio}}
+                    -
+                    {{this.hora_fin}}
+
+                </td>
+
+                <td>
+
+                    <a
+                        href="/horario/editar/{{this.id}}"
+                        class="btn btn-warning btn-sm"
+                    >
+                        Editar
+                    </a>
+
+                    <form
+                        action="/horario/eliminar/{{this.id}}"
+                        method="POST"
+                        style="display:inline;"
+                    >
+
+                        <button
+                            type="submit"
+                            class="btn btn-danger btn-sm"
                         >
+                            Eliminar
+                        </button>
 
-                            {{this.nombre}}
+                    </form>
 
-                        </span>
+                </td>
 
-                    </td>
+            </tr>
 
-                    <td>{{this.dia}}</td>
+            {{/each}}
 
-                    <td>
+        </tbody>
 
-                        {{this.hora_inicio}}
-                        -
-                        {{this.hora_fin}}
+    </table>
 
-                    </td>
-
-                    <td>
-                        <a
-                            href="/horario/editar/{{this.id}}"
-                            class="btn btn-warning btn-sm"
-                        >
-                            Editar
-                        </a>
-                        <form
-                            action="/horario/eliminar/{{this.id}}"
-                            method="POST"
-                            style="display:inline;"
-                        >
-
-                            <button
-                                type="submit"
-                                class="btn btn-danger btn-sm"
-                            >
-                                Eliminar
-                            </button>
-
-                        </form>
-
-                    </td>
-
-                </tr>
-
-                {{/each}}
-
-            </tbody>
-
-        </table>
-
-    </div>
+</div>
+```
 
 </div>

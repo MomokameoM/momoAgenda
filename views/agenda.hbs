@@ -1,155 +1,178 @@
-<div class="container text-center">
+<div class="agenda-container">
 
-  <div class="row align-items-center">
+```
+<h1 class="titulo-agenda">
+    AGENDA DE {{username}}
+</h1>
 
-    <h1 id="titulo" class="pb-2">
-      <b>Agenda de {{username}}</b>
-    </h1>
+<div class="agenda-layout">
 
-    <div class="col">
+    <!-- TABLA -->
 
-      <table
-        class="table table-light table-hover table-bordered"
-        id="tabla"
-      >
+    <div class="agenda-tabla">
 
-        <thead class="table-dark">
+        <p class="subtitulo-agenda">
+            AQUÍ PUEDES VER TU AGENDA
+        </p>
 
-          <tr>
-            <th>Fecha</th>
-            <th>Materia</th>
-            <th>Tarea</th>
-            <th>Estado</th>
-            <th>Acciones</th>
-          </tr>
+        <table class="tabla-agenda">
 
-        </thead>
+            <thead>
 
-        <tbody>
+                <tr>
 
-          {{#each agenda}}
+                    <th>FECHA</th>
+                    <th>MATERIA</th>
+                    <th>TAREA</th>
+                    <th>ESTADO</th>
+                    <th>ACCIONES</th>
 
-          <tr {{#if this.vencida}} class="table-danger" {{/if}} >
+                </tr>
 
-            <td>{{formatDate this.fecha_entrega}}</td>
+            </thead>
 
-            <td>
-                <span class="badge" style=" background-color: {{this.color}}; color: white;">
-                        {{this.materia}}
-                </span>
-            </td>
+            <tbody>
 
-            <td>{{this.titulo}}</td>
+                {{#each agenda}}
 
-            <td>
+                <tr {{#if this.vencida}} class="fila-vencida" {{/if}}>
 
-                {{#if (eq this.estado "completada")}}
+                    <td>
+                        {{formatDate this.fecha_entrega}}
+                    </td>
 
-                    <span class="badge bg-success">
-                        Completada
-                    </span>
+                    <td>
 
-                {{else}}
+                        <span
+                            class="badge"
+                            style="
+                                background-color:
+                                {{this.color}};
+                                color:white;
+                            "
+                        >
 
-                    {{#if this.vencida}}
+                            {{this.materia}}
 
-                        <span class="badge bg-danger">
-                            Vencida
                         </span>
 
-                    {{else}}
+                    </td>
 
-                        <span class="badge bg-warning text-dark">
-                            Pendiente
-                        </span>
+                    <td>
+                        {{this.titulo}}
+                    </td>
 
-                    {{/if}}
+                    <td>
 
-                {{/if}}
+                        {{#if (eq this.estado "completada")}}
 
-            </td>
+                            <span class="estado-completada">
+                                Completada
+                            </span>
 
-            <td><!-- ACCIONES -->
-                <form
-                    action="/agenda/toggleEstado/{{this.id}}"
-                    method="POST"
-                    style="display:inline;"
-                >
+                        {{else}}
 
-                    {{#if (eq this.estado "pendiente")}}
+                            {{#if this.vencida}}
 
-                        <button
-                            type="submit"
-                            class="btn btn-success btn-sm"
+                                <span class="estado-vencida">
+                                    Vencida
+                                </span>
+
+                            {{else}}
+
+                                <span class="estado-pendiente">
+                                    Pendiente
+                                </span>
+
+                            {{/if}}
+
+                        {{/if}}
+
+                    </td>
+
+                    <td class="acciones">
+
+                        <form
+                            action="/agenda/toggleEstado/{{this.id}}"
+                            method="POST"
                         >
-                            Completar
-                        </button>
 
-                    {{else}}
+                            {{#if (eq this.estado "pendiente")}}
 
-                        <button
-                            type="submit"
-                            class="btn btn-secondary btn-sm"
+                                <button
+                                    type="submit"
+                                    class="btn-completar"
+                                >
+                                    COMPLETAR
+                                </button>
+
+                            {{else}}
+
+                                <button
+                                    type="submit"
+                                    class="btn-reabrir"
+                                >
+                                    REABRIR
+                                </button>
+
+                            {{/if}}
+
+                        </form>
+
+                        <a
+                            href="/agenda/editar/{{this.id}}"
+                            class="btn-editar"
                         >
-                            Reabrir
-                        </button>
+                            EDITAR
+                        </a>
 
-                    {{/if}}
+                        <form
+                            action="/agenda/eliminar/{{this.id}}"
+                            method="POST"
+                        >
 
-                </form>
-              <a
-                href="/agenda/editar/{{this.id}}"
-                class="btn btn-warning btn-sm"
-              >
-                Editar
-              </a>
+                            <button
+                                type="submit"
+                                class="btn-eliminar"
+                            >
+                                ELIMINAR
+                            </button>
 
-              <form
-                action="/agenda/eliminar/{{this.id}}"
-                method="POST"
-                style="display:inline;"
-              >
+                        </form>
 
-                <button
-                  type="submit"
-                  class="btn btn-danger btn-sm"
-                >
-                  Eliminar
-                </button>
+                    </td>
 
-              </form>
+                </tr>
 
-            </td>
+                {{/each}}
 
-          </tr>
+            </tbody>
 
-          {{/each}}
-
-        </tbody>
-
-      </table>
+        </table>
 
     </div>
 
-    <div class="col">
+    <!-- FORMULARIO -->
 
-      <p id="texto_normal" class="mt-4">
-        Aqui puedes ver tu agenda.
-      </p>
+    <div class="agenda-formulario">
 
-      <a href="/agenda/nueva">
+        <h3 class="subtitulo-agenda">
+            AGREGAR TAREA
+        </h3>
 
-        <button
-          type="button"
-          class="btn btn-success"
-        >
-          Agregar
-        </button>
+        <a href="/agenda/nueva">
 
-      </a>
+            <button
+                class="btn-crear-principal"
+            >
+                CREAR
+            </button>
+
+        </a>
 
     </div>
 
-  </div>
+</div>
+```
 
 </div>

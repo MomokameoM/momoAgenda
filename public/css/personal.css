@@ -1,5 +1,6 @@
 p{
     font-size: 1.5rem;
+    color: #ff0088;
 }
 
 #boton_personal {
@@ -86,9 +87,9 @@ body{
     position: absolute;
 
     left: 40px;
-    bottom: -20px;
+    bottom: -8vh;
 
-    height: 220px;
+    height: 50vh;
 
     z-index: 10; /* delante del footer */
 }
@@ -97,9 +98,352 @@ body{
     position: absolute;
 
     right: 40px;
-    bottom: -20px;
+    bottom: -8vh;
 
-    height: 350px;
+    height: 50vh;
 
     z-index: 10; /* delante del footer */
+}
+
+/*---------------------------- login  -------------------- */
+
+.login-container{
+    position: relative;
+    min-height: 80vh;
+    padding-top: 50px;
+}
+
+.login-title{
+    text-align: center;
+    color: #89c5ca;
+    font-size: 4rem;
+    font-weight: 800;
+    margin-bottom: 70px;
+}
+
+.login-form{
+    width: 500px;
+    margin: auto;
+}
+
+.form-row{
+    display: flex;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.form-row label{
+    width: 50vw;
+    color: #89c5ca;
+    font-size: 1rem;
+    font-weight: bold;
+}
+
+.form-row input{
+    flex: 1;
+
+    border: none;
+
+    background: #74b3bc;
+
+    border-radius: 50px;
+
+    padding: 15px 25px;
+
+    font-size: 1.2rem;
+
+    outline: none;
+}
+.btn-login{
+    display: block;
+
+    margin: 40px auto;
+
+    background: #ff0088;
+
+    color: white;
+
+    border: none;
+
+    border-radius: 40px;
+
+    padding: 15px 50px;
+
+    font-size: 1.1rem;
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+    transition: .3s;
+}
+
+.btn-login:hover{
+    transform: scale(1.05);
+}
+
+/*---------------------------- horario  -------------------- */
+
+.titulo-horario{
+    text-align:center;
+    color:#ff0088;
+    font-size:3rem;
+    font-weight:900;
+    margin:20px 0;
+}
+
+.tabla-horario{
+    width:95%;
+    margin:auto;
+    border-collapse:separate;
+    border-spacing:4px;
+}
+
+.tabla-horario th{
+    background:#9fd7de;
+    color:#ff0088;
+    text-align:center;
+    padding:18px;
+    font-weight:bold;
+}
+
+.tabla-horario td{
+    background:#9fd7de;
+    text-align:center;
+    padding:18px;
+    color:#ff0088;
+    border:2px solid rgba(255,255,255,.4);
+}
+
+.hora-columna{
+    width:120px;
+    font-weight:bold;
+}
+
+.bloque-materia{
+    color:white !important;
+    font-weight:bold;
+    vertical-align:middle;
+    border-radius:10px;
+}
+
+.subtitulo-momo{
+    color:#ff0088;
+    font-weight:bold;
+    margin-bottom:20px;
+}
+
+.label-momo{
+    color:#ff0088;
+    font-weight:bold;
+}
+
+.btn-momo{
+    background:#ff0088;
+    color:white;
+    border:none;
+    border-radius:30px;
+    padding:10px 25px;
+    font-weight:bold;
+}
+
+.separador-momo{
+    margin:40px 0;
+}
+
+.tabla-bloques{
+    width:100%;
+}
+
+.tabla-bloques th{
+    background:#9fd7de;
+    color:#ff0088;
+}
+
+/*---------------------------- agenda  -------------------- */
+
+.titulo-agenda{
+    text-align:center;
+    color:#ff0088;
+    font-weight:900;
+    margin-bottom:30px;
+}
+
+.agenda-layout{
+    display:flex;
+    gap:40px;
+    align-items:flex-start;
+}
+
+.agenda-tabla{
+    flex:3;
+}
+
+.agenda-formulario{
+    flex:1;
+    text-align:center;
+}
+
+.subtitulo-agenda{
+    color:#ff0088;
+    font-size:2rem;
+    margin-bottom:20px;
+}
+
+.tabla-agenda{
+    width:100%;
+    border-collapse:collapse;
+}
+
+.tabla-agenda th{
+    background:#9fd7de;
+    color:#ff0088;
+    padding:15px;
+    border:2px solid #86cdd5;
+}
+
+.tabla-agenda td{
+    background:#d8eff2;
+    border:2px solid #9fd7de;
+    padding:10px;
+}
+
+.acciones{
+    padding:0 !important;
+}
+
+.btn-completar,
+.btn-editar,
+.btn-eliminar,
+.btn-reabrir{
+    width:100%;
+    border:none;
+    padding:12px;
+    display:block;
+    text-decoration:none;
+}
+
+.btn-completar{
+    background:#b9f0b9;
+}
+
+.btn-editar{
+    background:#f5eaa0;
+    color:#c8a700;
+}
+
+.btn-eliminar{
+    background:#f7b3b3;
+    color:#ff4d4d;
+}
+
+.btn-reabrir{
+    background:#d0d0d0;
+}
+
+.btn-crear-principal{
+    margin-top:250px;
+
+    width:220px;
+
+    border:none;
+
+    border-radius:40px;
+
+    background:#ff0088;
+
+    color:white;
+
+    font-weight:bold;
+
+    padding:15px;
+}
+
+/*---------------------------- materias  -------------------- */
+
+.titulo-materias{
+    text-align:center;
+    color:#ff0088;
+    font-weight:900;
+    margin-bottom:30px;
+}
+
+.materias-layout{
+    display:flex;
+    gap:40px;
+    align-items:flex-start;
+}
+
+.materias-tabla{
+    flex:3;
+}
+
+.materias-panel{
+    flex:1;
+    text-align:center;
+}
+
+.subtitulo-materias{
+    color:#ff0088;
+    font-size:2rem;
+    margin-bottom:20px;
+}
+
+.tabla-materias{
+    width:100%;
+    border-collapse:collapse;
+}
+
+.tabla-materias th{
+    background:#9fd7de;
+    color:#ff0088;
+    padding:15px;
+    border:2px solid #86cdd5;
+}
+
+.tabla-materias td{
+    background:#d8eff2;
+    border:2px solid #9fd7de;
+    padding:15px;
+}
+
+.acciones{
+    padding:0 !important;
+}
+
+.btn-editar,
+.btn-eliminar{
+    width:100%;
+    display:block;
+    text-decoration:none;
+    border:none;
+    padding:12px;
+}
+
+.btn-editar{
+    background:#f5eaa0;
+    color:#c8a700;
+}
+
+.btn-eliminar{
+    background:#f7b3b3;
+    color:#ff4d4d;
+}
+
+.btn-crear-principal{
+    margin-top:200px;
+
+    width:220px;
+
+    border:none;
+
+    border-radius:40px;
+
+    background:#ff0088;
+
+    color:white;
+
+    font-weight:bold;
+
+    padding:15px;
 }
