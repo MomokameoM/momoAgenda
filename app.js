@@ -20,6 +20,9 @@ const session = require('express-session');
 
 /*-----------COMPILADOR MODOSCRIPT----------- */
 const { procesarLinea } = require("./compilador");
+const { analizadorLexico, analizadorSintactico, ejecutarInstruccion } = require("./interprete");
+
+
 
 /*------INICIALIZACIÓN----------- */
 const app = express();
@@ -1165,6 +1168,31 @@ app.post("/compilar", async (req, res) => {
   }
 
   res.render("admin/modoscript", { resultado });
+});
+
+app.post('/ejecutar-script', async (req, res) => {
+    // Asegúrate de que 'req.body.codigo' coincide con el 'name' de tu textarea en HBS
+    const script = req.body.codigo; 
+    const userId = req.session.userId;
+
+    try {
+        // Fase 1: Análisis Léxico
+        const tokens = analizadorLexico(script);
+        
+        // Fase 2: Análisis Sintáctico (Genera el Árbol)
+        const arbol = analizadorSintactico(tokens);
+        
+        // Fase 3: Análisis Semántico y Ejecución
+        const resultado = await ejecutarInstruccion(arbol, userId, db); // Recuerda usar tu variable 'db' o 'pool'
+        
+        req.flash('success', resultado);
+        res.redirect('admin/modoscript'); // Redirige a tu vista del script
+        
+    } catch (error) {
+        // Atrapa errores Léxicos, Sintácticos o Semánticos y los muestra en rojo
+        req.flash('error', error.message);
+        res.redirect('admin/modoscript');
+    }
 });
 
 //----------------------------------- VISTA PARA LOGIN-------------------------------
