@@ -447,3 +447,174 @@ body{
 
     padding:15px;
 }
+
+.formulario-momo{
+
+    width:550px;
+
+    margin:40px auto;
+
+    text-align:center;
+}
+
+.titulo-formulario{
+
+    color:#ff0088;
+
+    font-size:3rem;
+
+    font-weight:900;
+
+    margin-bottom:40px;
+}
+
+.form-momo{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:25px;
+}
+
+.campo-momo{
+
+    display:flex;
+
+    flex-direction:column;
+
+    align-items:center;
+}
+
+.campo-momo label{
+
+    color:#89c5ca;
+
+    font-size:1.2rem;
+
+    font-weight:bold;
+
+    margin-bottom:10px;
+}
+
+.input-momo{
+
+    width:100%;
+
+    background:#86cdd5;
+
+    color:black;
+
+    border:none;
+
+    border-radius:30px;
+
+    padding:15px 20px;
+
+    outline:none;
+
+    font-size:1rem;
+}
+
+.input-momo:focus{
+
+    background:#7abac4;
+
+    box-shadow:none;
+
+    outline:none;
+}
+
+.textarea-momo{
+
+    width:100%;
+
+    height:140px;
+
+    resize:none;
+
+    background:#86cdd5;
+
+    border:none;
+
+    border-radius:25px;
+
+    padding:20px;
+
+    outline:none;
+
+    font-size:1rem;
+}
+
+.textarea-momo:focus{
+
+    background:#7abac4;
+}
+
+.btn-momo{
+
+    margin-top:15px;
+
+    background:#ff0088;
+
+    color:white;
+
+    border:none;
+
+    border-radius:40px;
+
+    padding:16px;
+
+    font-size:1.1rem;
+
+    font-weight:bold;
+
+    cursor:pointer;
+
+    transition:.3s;
+}
+
+.btn-momo:hover{
+
+    transform:scale(1.03);
+
+    background:#e5007a;
+}
+
+.input-color-momo{
+
+    width:140px;
+
+    height:70px;
+
+    border:none;
+
+    border-radius:25px;
+
+    background:#8fd6df;
+
+    cursor:pointer;
+
+    padding:10px;
+}
+
+.input-color-momo::-webkit-color-swatch{
+
+    border:none;
+
+    border-radius:15px;
+}
+
+.input-color-momo::-webkit-color-swatch-wrapper{
+
+    padding:0;
+}
+
+.invalid-feedback{
+
+    color:#ff0088;
+
+    font-weight:bold;
+
+    margin-top:8px;
+}

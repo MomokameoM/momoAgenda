@@ -1,43 +1,73 @@
-<h1>Editar materia</h1>
+<div class="formulario-momo">
+
+```
+<h1 class="titulo-formulario">
+    EDITAR MATERIA
+</h1>
 
 <form
     action="/materias/editar/{{materia.id}}"
     method="POST"
+    class="form-momo"
 >
 
-    <label>Nombre</label>
+    <div class="campo-momo">
 
-    <input
-        type="text"
-        name="nombre"
-        value="{{materia.nombre}}"
-        required
+        <label for="nombre">
+            NOMBRE DE LA MATERIA
+        </label>
+
+        <input
+            type="text"
+            name="nombre"
+            id="nombre"
+            value="{{materia.nombre}}"
+            required
+            class="input-momo"
+        >
+
+    </div>
+
+    <div class="campo-momo">
+
+        <label for="profesor">
+            PROFESOR
+        </label>
+
+        <input
+            type="text"
+            name="profesor"
+            id="profesor"
+            value="{{materia.profesor}}"
+            class="input-momo"
+        >
+
+    </div>
+
+    <div class="campo-momo">
+
+        <label for="color">
+            COLOR DE LA MATERIA
+        </label>
+
+        <input
+            type="color"
+            name="color"
+            id="color"
+            value="{{materia.color}}"
+            class="input-color-momo"
+        >
+
+    </div>
+
+    <button
+        type="submit"
+        class="btn-momo"
     >
-
-    <br><br>
-
-    <label>Profesor</label>
-
-    <input
-        type="text"
-        name="profesor"
-        value="{{materia.profesor}}"
-    >
-
-    <br><br>
-
-    <label>Color</label>
-
-    <input
-        type="color"
-        name="color"
-        value="{{materia.color}}"
-    >
-
-    <br><br>
-
-    <button type="submit">
-        Guardar cambios
+        GUARDAR CAMBIOS
     </button>
 
 </form>
+```
+
+</div>

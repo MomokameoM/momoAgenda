@@ -1,35 +1,99 @@
-<h1>Nueva materia</h1>
+<div class="formulario-momo">
 
-<form action="/materias/nueva" method="POST">
+```
+<h1 class="titulo-formulario">
+    NUEVA MATERIA
+</h1>
 
-    <label>Nombre</label>
-    <input
-        type="text"
-        name="nombre"
-        required
+<form
+    action="/materias/nueva"
+    method="POST"
+    id="nuevaMateriaForm"
+    class="form-momo needs-validation"
+    novalidate
+>
+
+    <div class="campo-momo">
+
+        <label for="nombre">
+            NOMBRE DE LA MATERIA
+        </label>
+
+        <input
+            type="text"
+            class="input-momo"
+            name="nombre"
+            id="nombre"
+            placeholder="Ej. Programación Web"
+            required
+        >
+
+        <div class="invalid-feedback">
+            Ingresa el nombre de la materia.
+        </div>
+
+    </div>
+
+    <div class="campo-momo">
+
+        <label for="profesor">
+            PROFESOR
+        </label>
+
+        <input
+            type="text"
+            class="input-momo"
+            name="profesor"
+            id="profesor"
+            placeholder="Nombre del profesor"
+        >
+
+    </div>
+
+    <div class="campo-momo">
+
+        <label for="color">
+            COLOR DE LA MATERIA
+        </label>
+
+        <input
+            type="color"
+            class="input-color-momo"
+            name="color"
+            id="color"
+            value="#FF5733"
+            title="Selecciona un color"
+        >
+
+    </div>
+
+    <button
+        type="submit"
+        class="btn-momo"
     >
-
-    <br><br>
-
-    <label>Profesor</label>
-    <input
-        type="text"
-        name="profesor"
-    >
-
-    <br><br>
-
-    <label>Color</label>
-    <input
-        type="color"
-        name="color"
-        value="#FF5733"
-    >
-
-    <br><br>
-
-    <button type="submit">
-        Crear materia
+        CREAR MATERIA
     </button>
 
 </form>
+```
+
+</div>
+
+<script>
+
+document
+    .getElementById('nuevaMateriaForm')
+    .addEventListener('submit', function(e){
+
+        if(!this.checkValidity()){
+
+            e.preventDefault();
+            e.stopPropagation();
+
+        }
+
+        this.classList.add('was-validated');
+
+    });
+
+</script>

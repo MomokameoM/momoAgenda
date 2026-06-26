@@ -1,52 +1,87 @@
-<h1>Nueva tarea</h1>
+<div class="formulario-momo">
 
-<form action="/agenda/nueva" method="POST">
+    <h1 class="titulo-formulario">
+        NUEVA TAREA
+    </h1>
 
-    <label>Título</label>
-
-    <input
-        type="text"
-        name="titulo"
-        required
+    <form
+        action="/agenda/nueva"
+        method="POST"
+        class="form-momo"
     >
 
-    <br><br>
+        <div class="campo-momo">
 
-    <label>Descripción</label>
+            <label>
+                TÍTULO
+            </label>
 
-    <textarea
-        name="descripcion"
-    ></textarea>
+            <input
+                type="text"
+                name="titulo"
+                required
+                class="input-momo"
+            >
 
-    <br><br>
+        </div>
 
-    <label>Materia</label>
+        <div class="campo-momo">
 
-    <select name="materia_id">
+            <label>
+                DESCRIPCIÓN
+            </label>
 
-        {{#each materias}}
+            <textarea
+                name="descripcion"
+                class="textarea-momo"
+            ></textarea>
 
-        <option value="{{this.id}}">
-            {{this.nombre}}
-        </option>
+        </div>
 
-        {{/each}}
+        <div class="campo-momo">
 
-    </select>
+            <label>
+                MATERIA
+            </label>
 
-    <br><br>
+            <select
+                name="materia_id"
+                class="input-momo"
+            >
 
-    <label>Fecha entrega</label>
+                {{#each materias}}
 
-    <input
-        type="datetime-local"
-        name="fecha_entrega"
-    >
+                    <option value="{{this.id}}">
+                        {{this.nombre}}
+                    </option>
 
-    <br><br>
+                {{/each}}
 
-    <button type="submit">
-        Crear tarea
-    </button>
+            </select>
 
-</form>
+        </div>
+
+        <div class="campo-momo">
+
+            <label>
+                FECHA DE ENTREGA
+            </label>
+
+            <input
+                type="datetime-local"
+                name="fecha_entrega"
+                class="input-momo"
+            >
+
+        </div>
+
+        <button
+            type="submit"
+            class="btn-momo"
+        >
+            CREAR TAREA
+        </button>
+
+    </form>
+
+</div>
